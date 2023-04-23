@@ -1,41 +1,29 @@
-	
-
 #include "AdptArray.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-
-struct AdptArray_{
-	PElement(*copy_func)(PElement);
-	void(*del_func)(PElement);
-	void(*print_func)(PElement);
-	PElement* arr;
-	int len;
-}AdptArray_;
-
-PAdptArray CreateAdptArray(COPY_FUNC cf, DEL_FUNC df, PRINT_FUNC pf){
+//here we init PAdptArray (pointer to AdptArray_)
+PAdptArray CreateAdptArray(COPY_FUNC copy, DEL_FUNC delete, PRINT_FUNC print){
 	PAdptArray pAdptArray = (PAdptArray)calloc(1, sizeof(AdptArray_));
-	pAdptArray->copy_func = cf;
-	pAdptArray->del_func = df;
-	pAdptArray->print_func = pf;
+	pAdptArray->copy_func = copy;
+	pAdptArray->del_func = delete;
+	pAdptArray->print_func = print;
 	pAdptArray->len = -1;
-	
 	pAdptArray->arr=NULL;
 
 	return pAdptArray;
 }
 
 void DeleteAdptArray(PAdptArray ptr){
-	int size = GetAdptArraySize(ptr);
+	int size = GetAdptArraySize(ptr); 
 	
 	for (int i =0; i<size; i++){
-		if(!ptr->arr[i]){
+		if(!ptr->arr[i]){ //check if the current is null avoid access null and make seg-fault
 			continue;
 		}
-		ptr->del_func(ptr->arr[i]);
+		ptr->del_func(ptr->arr[i]); 
 	}
-	
 	free(ptr->arr);
 	free(ptr);
 }
@@ -44,8 +32,8 @@ Result SetAdptArrayAt(PAdptArray pAdptArray, int idx, PElement pElement){
 	int size = pAdptArray->len;
 	if(!pElement){
 		return FAIL;
-	}
-	PElement copy_pElement = pAdptArray->copy_func(pElement);
+	} //cant set to null
+	PElement copy_pElement = pAdptArray->copy_func(pElement); //return the copy of the element
 	
 	if(idx>=0){ //positive index
 		if(size==-1){//wasn't init yet
@@ -152,22 +140,19 @@ int GetAdptArraySize(PAdptArray pAdptArray){
 
 void PrintDB(PAdptArray pAdptArray){
 	int size = GetAdptArraySize(pAdptArray);
-    	if (size==-1){
-    		return;
-    	}
-    
-    	int i = 0;
-   	
-    	while(i < size){
-    		if(!pAdptArray->arr[i]){
-    			i++;
+	if (size==-1){ //wasnt init yet
+		return;
+	}
+
+	int i = 0;
+	while(i < size){
+		if(!pAdptArray->arr[i]){
+			i++;
 			continue;
-		}
-    		
+		} //check if the current is null: continue, else: print it
+		
 		pAdptArray->print_func(pAdptArray->arr[i]);
-    		i++;
-    	
-         
-    	}
+		i++;
+	}
         
 }

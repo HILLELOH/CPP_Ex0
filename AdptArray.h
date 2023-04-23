@@ -1,8 +1,6 @@
 #ifndef ADAPTARRAY_H
 #define ADAPTARRAY_H
 
-
-
 typedef struct AdptArray_* PAdptArray;
 typedef enum  {FAIL = 0, SUCCESS=1} Result;
 typedef void* PElement;
@@ -11,11 +9,12 @@ typedef void(*DEL_FUNC)(PElement);
 typedef PElement(*COPY_FUNC)(PElement);
 typedef void(*PRINT_FUNC)(PElement);
 
-struct AdptArray_{
+typedef struct AdptArray_{
     PElement(*copy_func)(PElement);
     void(*del_func)(PElement);
     void(*print_func)(PElement);
     PElement* arr;
+    int len;
 }AdptArray_;
 
 PAdptArray CreateAdptArray(COPY_FUNC, DEL_FUNC, PRINT_FUNC);
